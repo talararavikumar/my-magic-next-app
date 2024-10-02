@@ -1,55 +1,28 @@
-import { ChakraProvider, Button, Box, Flex, Spacer } from '@chakra-ui/react';
-import Link from '../../node_modules/next/link';
-import Logout from './logout/page';
-import { verifyToken } from './utils/auth';
+// app/page.tsx
+'use client';
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  // Check if the user is authenticated
-  const user = verifyToken();
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from './lib/firebase';
 
-  return (
-    <html lang="en">
-      <body>
-        <ChakraProvider>
-          <Box p={4} bg="gray.100" shadow="md">
-            <Flex maxW="1200px" mx="auto" align="center">
-              <Box>
-                <Link href="/">
-                  <Button colorScheme="teal" variant="link">
-                    Home
-                  </Button>
-                </Link>
-              </Box>
-              <Spacer />
-              <Box>
-                {user ? (
-                  // If user is authenticated, show Logout button
-                  <Logout />
-                ) : (
-                  // If user is not authenticated, show Sign Up and Log In links
-                  <>
-                    <Link href="/signup">
-                      <Button colorScheme="teal" mr={4}>
-                        Sign Up
-                      </Button>
-                    </Link>
-                    <Link href="/login">
-                      <Button colorScheme="teal">
-                        Log In
-                      </Button>
-                    </Link>
-                  </>
-                )}
-              </Box>
-            </Flex>
-          </Box>
-          <Box>{children}</Box>
-        </ChakraProvider>
-      </body>
-    </html>
-  );
+export default function Home() {
+  const router = useRouter();
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // If user is authenticated, redirect to the dashboard
+        router.push('/dashboard');
+      } else {
+        // If not authenticated, redirect to sign-in page
+        router.push('/auth/signin');
+      }
+    });
+
+    // Cleanup subscription on unmount
+    return () => unsubscribe();
+  }, [router]);
+
+  return null; // No content is displayed on the main page
 }
