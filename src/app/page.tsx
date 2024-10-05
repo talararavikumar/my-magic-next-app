@@ -10,7 +10,7 @@ export default function Home() {
   const router = useRouter();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, (user:any) => {
       if (user) {
         // If user is authenticated, redirect to the dashboard
         router.push('/dashboard');

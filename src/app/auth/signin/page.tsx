@@ -11,10 +11,11 @@ export default function SignIn() {
   const [email, setEmail] = useState<string>('');
   const [message, setMessage] = useState<string>('');
   const router = useRouter();
+  
 
   const handleSendLink = async () => {
     const actionCodeSettings = {
-      url: `${window.location.origin}/auth/verify`, // The URL that the user will be redirected to after they sign in
+      url: `${window.location.origin}/auth/verify?email=${encodeURIComponent(email)}`, // The URL that the user will be redirected to after they sign in
       handleCodeInApp: true,
     };
 
